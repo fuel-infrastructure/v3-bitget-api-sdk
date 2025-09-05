@@ -1,6 +1,7 @@
 import base64
 import hmac
 import time
+from typing import Optional
 
 from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
@@ -8,6 +9,11 @@ from Crypto.Signature import PKCS1_v1_5 as pk
 
 from . import consts as c
 
+paptrading: Optional[str] = None
+
+def set_paptrading(value: str):
+    global paptrading
+    paptrading = value
 
 def sign(message, secret_key):
     mac = hmac.new(bytes(secret_key, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
@@ -34,6 +40,8 @@ def get_header(api_key, sign, timestamp, passphrase):
     header[c.OK_ACCESS_TIMESTAMP] = str(timestamp)
     header[c.OK_ACCESS_PASSPHRASE] = passphrase
     header[c.LOCALE] = 'zh-CN'
+    if paptrading:
+        header["paptrading"] = paptrading
 
     return header
 
