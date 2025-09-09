@@ -10,10 +10,13 @@ from Crypto.Signature import PKCS1_v1_5 as pk
 from . import consts as c
 
 paptrading: Optional[str] = None
+contract_ws_url = 'wss://ws.bitget.com/mix/v1/stream'
 
 def set_paptrading(value: str):
     global paptrading
+    global contract_ws_url
     paptrading = value
+    contract_ws_url = 'wss://ws.bitget.com/mix/v1/stream' if value != '1' else 'wss://wspap.bitget.com/v2/ws/private'
 
 def sign(message, secret_key):
     mac = hmac.new(bytes(secret_key, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
