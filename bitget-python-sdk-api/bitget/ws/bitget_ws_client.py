@@ -46,7 +46,7 @@ class BitgetWsClient:
 
     def build(self):
         self.__ws_client = self.__init_client()
-        __thread = threading.Thread(target=self.connect)
+        __thread = threading.Thread(target=self.connect, daemon=True)
         __thread.start()
 
         while not self.has_connect():
@@ -117,6 +117,7 @@ class BitgetWsClient:
     def __keep_connected(self, interval):
         try:
             __timer_thread = Timer(interval, self.__keep_connected, (interval,))
+            __timer_thread.daemon = True
             __timer_thread.start()
             self.__ws_client.send("ping")
         except Exception as ex:
