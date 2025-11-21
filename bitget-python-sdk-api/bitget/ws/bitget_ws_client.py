@@ -44,17 +44,22 @@ class BitgetWsClient:
         self.__scribe_map = {}
         self.__allbooks_map = {}
 
-    def build(self):
+    def build(self, timeout=10):
+        start_time = int(time.time())
+
         self.__ws_client = self.__init_client()
         __thread = threading.Thread(target=self.connect, daemon=True)
         __thread.start()
 
         while not self.has_connect():
             logging.debug("start connecting... url: " + self.__url)
+            if int(time.time()) - start_time > timeout:
+                raise TimeoutError("Connect to Bitget WS timed out")
             time.sleep(1)
 
+        remaining_time = timeout - (int(time.time()) - start_time)
         if self.__need_login:
-            self.__login()
+            self.__login(timeout=remaining_time)
 
         self.__keep_connected(25)
 
@@ -94,7 +99,9 @@ class BitgetWsClient:
         except Exception as ex:
             logging.error(ex)
 
-    def __login(self):
+    def __login(self, timeout=10):
+        start_time = time.time()
+
         utils.check_none(self.__api_key, "api key")
         utils.check_none(self.__api_secret_key, "api secret key")
         utils.check_none(self.__passphrase, "passphrase")
@@ -105,7 +112,11 @@ class BitgetWsClient:
         ws_login_req = WsLoginReq(self.__api_key, self.__passphrase, str(timestamp), sign)
         self.send_message(WS_OP_LOGIN, [ws_login_req])
         logging.debug("logging in......")
+
+        # Wait for login to complete or timeout
         while not self.__login_status:
+            if time.time() - start_time > timeout:
+                raise TimeoutError("Login to Bitget WS timed out")
             time.sleep(1)
 
     def connect(self):
@@ -227,6 +238,10 @@ class BitgetWsClient:
         for channel in self.__all_suribe :
             self.subscribe([channel])
         pass
+
+    def close(self):
+        self.__reconnect_status = True  # to stop reconnecting
+        self.__close()
 
     def __close(self):
         self.__login_status = False
