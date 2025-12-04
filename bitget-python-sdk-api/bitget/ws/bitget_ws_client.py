@@ -16,6 +16,15 @@ from .. import consts as c, utils
 WS_OP_LOGIN = 'login'
 WS_OP_SUBSCRIBE = "subscribe"
 WS_OP_UNSUBSCRIBE = "unsubscribe"
+WS_OP_TRADE = 'trade'
+
+class WsTradeReq:
+    def __init__(self, op, id, category, topic, args):
+        self.op = op
+        self.id = id
+        self.category = category
+        self.topic = topic
+        self.args = args
 
 
 def handle(message):
@@ -138,6 +147,40 @@ class BitgetWsClient:
         message = json.dumps(BaseWsReq(op, args), default=lambda o: o.__dict__)
         logging.debug("send message:" + message)
         self.__ws_client.send(message)
+
+    # Example:
+    # {
+    #   "op": "trade",
+    #   "id": "1750034396082",
+    #   "category": "spot",
+    #   "topic": "place-order",
+    #   "args": [
+    #     {
+    #       "orderType": "limit",
+    #       "price": "100",
+    #       "qty": "0.1",
+    #       "side": "buy",
+    #       "symbol": "BTCUSDT",
+    #       "timeInForce": "gtc",
+    #     }
+    #   ]
+    # }
+    def send_ws_api_request(self, op, category, topic, params):
+        req_id = str(int(time.time() * 1000))
+        
+        # Ensure params is a list
+        if isinstance(params, dict):
+            args = [params]
+        else:
+            args = params
+
+        req = WsTradeReq(op, req_id, category, topic, args)
+        
+        message = json.dumps(req, default=lambda o: o.__dict__)
+        logging.debug("send ws api request:" + message)
+
+        self.__ws_client.send(message)
+        return req_id
 
     def subscribe(self, channels, listener=None):
 
