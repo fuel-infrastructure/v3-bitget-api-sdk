@@ -19,13 +19,9 @@ WS_OP_UNSUBSCRIBE = "unsubscribe"
 WS_OP_TRADE = 'trade'
 
 class WsTradeReq:
-    def __init__(self, op, id, category, topic, args):
+    def __init__(self, op, args):
         self.op = op
-        self.id = id
-        self.category = category
-        self.topic = topic
         self.args = args
-
 
 def handle(message):
     logging.debug("default:" + message)
@@ -150,31 +146,30 @@ class BitgetWsClient:
 
     # Example:
     # {
-    #   "op": "trade",
-    #   "id": "1750034396082",
-    #   "category": "spot",
-    #   "topic": "place-order",
-    #   "args": [
-    #     {
-    #       "orderType": "limit",
-    #       "price": "100",
-    #       "qty": "0.1",
-    #       "side": "buy",
-    #       "symbol": "BTCUSDT",
-    #       "timeInForce": "gtc",
-    #     }
-    #   ]
+    #    "op":"trade",
+    #    "args":[
+    #       {
+    #          "id":"xxxxx-xxx-xxx-xxxx-xxxxxx",
+    #          "instType":"SPOT",
+    #          "instId":"BTCUSDT",
+    #          "channel":"cancel-order",
+    #          "params":{
+    #             "orderId":"xxxxxxxxx",
+    #             "clientOid":"xxxxx-xxx-xxx-xxxx-xxxxxx"
+    #          }
+    #       }
+    #    ]
     # }
-    def send_ws_api_request(self, op, category, topic, params):
+    def send_ws_api_request(self, op, args):
         req_id = str(int(time.time() * 1000))
         
-        # Ensure params is a list
-        if isinstance(params, dict):
-            args = [params]
+        # Ensure args is a list
+        if isinstance(args, dict):
+            params = [args]
         else:
-            args = params
+            params = args
 
-        req = WsTradeReq(op, req_id, category, topic, args)
+        req = WsTradeReq(op, params)
         
         message = json.dumps(req, default=lambda o: o.__dict__)
         logging.debug("send ws api request:" + message)
