@@ -219,7 +219,7 @@ class BitgetWsClient:
             logging.debug("Keep connected:" + message)
             return
         json_obj = json.loads(message)
-        if "code" in json_obj and json_obj.get("code") != 0:
+        if "code" in json_obj and str(json_obj.get("code")) != "0":
             if self.__error_listener:
                 self.__error_listener(message)
                 return
