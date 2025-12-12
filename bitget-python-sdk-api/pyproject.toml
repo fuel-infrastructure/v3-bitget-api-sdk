@@ -52,6 +52,7 @@ packages = [
     "bitget.v2",
     "bitget.v2.mix",
     "bitget.v2.spot",
+    "bitget.ws",
 ]
 
 [tool.setuptools.package-data]
