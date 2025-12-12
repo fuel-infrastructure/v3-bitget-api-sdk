@@ -28,6 +28,8 @@ classifiers = [
 
 dependencies = [
     "requests>=2.25.0",
+    "pycryptodome>=3.23.0",
+    "websocket-client>=1.6.0",
 ]
 
 [project.optional-dependencies]
@@ -42,7 +44,15 @@ Homepage = "https://github.com/FuelLabs/v3-bitget-api-sdk"
 Repository = "https://github.com/FuelLabs/v3-bitget-api-sdk"
 
 [tool.setuptools]
-packages = ["bitget"]
+packages = [
+    "bitget",
+    "bitget.v1",
+    "bitget.v1.mix",
+    "bitget.v1.spot",
+    "bitget.v2",
+    "bitget.v2.mix",
+    "bitget.v2.spot",
+]
 
 [tool.setuptools.package-data]
 "*" = ["*.txt", "*.md"]
