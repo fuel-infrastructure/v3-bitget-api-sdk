@@ -135,11 +135,12 @@ class BitgetWsClient:
             except Exception as ex:
                 logging.error(ex)
 
-            # Create and store the new timer
-            self.__keep_alive_timer = Timer(
-                interval, self.__keep_connected, (interval,))
-            self.__keep_alive_timer.daemon = True
-            self.__keep_alive_timer.start()
+            # Create and store new timer
+            __timer_thread = Timer(interval, self.__keep_connected, (interval,))
+            __timer_thread.daemon = True
+            __timer_thread.start()
+            self.__keep_alive_timer = __timer_thread
+
             self.__ws_client.send("ping")
         except Exception as ex:
             logging.error(ex)
