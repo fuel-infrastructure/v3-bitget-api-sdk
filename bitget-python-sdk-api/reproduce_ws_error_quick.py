@@ -25,8 +25,8 @@ time.sleep(3)
 print("Closing WebSocket (but __keep_connected timer still running)...")
 client.close()
 
-print("Waiting 10 seconds for __keep_connected to fire...")
+print("Waiting 60 seconds for __keep_connected to fire...")
 print("Watch for 'Connection is already closed' error:\n")
-time.sleep(1000)
+time.sleep(60)
 
 print("\n✓ If you saw the error above, the issue is reproduced!")
