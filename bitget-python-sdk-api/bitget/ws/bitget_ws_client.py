@@ -64,6 +64,7 @@ class BitgetWsClient:
 
         self.__keep_connected(25)
 
+        logging.info("built Bitget ws client")
         return self
 
     def api_key(self, api_key):
