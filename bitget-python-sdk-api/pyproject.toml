@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bitget-python-sdk"
+version = "1.0.0"
+description = "Bitget Python SDK for API v3"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "FuelLabs", email = "dev@fuellabs.io"}
+]
+keywords = ["bitget", "crypto", "trading", "api", "sdk"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "requests>=2.25.0",
+    "pycryptodome>=3.23.0",
+    "websocket-client>=1.6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/FuelLabs/v3-bitget-api-sdk"
+Repository = "https://github.com/FuelLabs/v3-bitget-api-sdk"
+
+[tool.setuptools]
+packages = [
+    "bitget",
+    "bitget.v1",
+    "bitget.v1.mix",
+    "bitget.v1.spot",
+    "bitget.v2",
+    "bitget.v2.mix",
+    "bitget.v2.spot",
+    "bitget.ws",
+]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.md"]
