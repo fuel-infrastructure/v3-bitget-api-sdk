@@ -139,8 +139,8 @@ class BitgetWsClient:
             # Create and store new timer
             __timer_thread = Timer(interval, self.__keep_connected, (interval,))
             __timer_thread.daemon = True
-            __timer_thread.start()
             self.__keep_alive_timer = __timer_thread
+            self.__keep_alive_timer.start()
 
             self.__ws_client.send("ping")
         except Exception as ex:
