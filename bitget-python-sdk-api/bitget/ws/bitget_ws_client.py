@@ -43,6 +43,7 @@ class BitgetWsClient:
         self.__url = url
         self.__scribe_map = {}
         self.__allbooks_map = {}
+        self.__keep_alive_timer = None
 
     def build(self, timeout=10):
         start_time = int(time.time())
@@ -63,6 +64,7 @@ class BitgetWsClient:
 
         self.__keep_connected(25)
 
+        logging.info("built Bitget ws client")
         return self
 
     def api_key(self, api_key):
@@ -127,9 +129,19 @@ class BitgetWsClient:
 
     def __keep_connected(self, interval):
         try:
+            try:
+                # Cancel the old timer if it exists
+                if self.__keep_alive_timer is not None:
+                    self.__keep_alive_timer.cancel()
+            except Exception as ex:
+                logging.error(ex)
+
+            # Create and store new timer
             __timer_thread = Timer(interval, self.__keep_connected, (interval,))
             __timer_thread.daemon = True
-            __timer_thread.start()
+            self.__keep_alive_timer = __timer_thread
+            self.__keep_alive_timer.start()
+
             self.__ws_client.send("ping")
         except Exception as ex:
             logging.error(ex)
@@ -246,6 +258,15 @@ class BitgetWsClient:
     def __close(self):
         self.__login_status = False
         self.__connection = False
+
+        # Cancel the keep-alive timer to prevent it from firing on closed connection
+        try:
+            if self.__keep_alive_timer is not None:
+                self.__keep_alive_timer.cancel()
+                self.__keep_alive_timer = None
+        except Exception as ex:
+            logging.error(ex)
+
         self.__ws_client.close()
 
     def __check_sum(self, json_obj):
